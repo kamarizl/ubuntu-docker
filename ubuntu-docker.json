@@ -71,8 +71,8 @@
         "ssh_password" : "docker",
         "cpus": "1",
         "memory": "1024",
-        "hostname": "ubuntu1604",
+        "hostname": "docker01",
         "headless": "false",
-        "disk_size": "20000"
+        "disk_size": "10000"
     }
 }
