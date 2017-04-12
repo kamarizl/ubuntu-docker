@@ -32,7 +32,19 @@ apt-get update
 apt-get install -y docker-ce
 
 echo "==> Cleaning up tmp"
+set +e
 rm -rf /tmp/*
+dpkg --list | awk '{ print $2 }' | grep -- '-dev$' | xargs apt-get -y purge
+dpkg --list | awk '{ print $2 }' | grep -- '-doc$' | xargs apt-get -y purge
+apt-get -y purge libx11-data xauth libxmuu1 libxcb1 libx11-6 libxext6
+apt-get -y purge build-essential git
+apt-get -y purge libx11-data xauth libxmuu1 libxcb1 libx11-6 libxext6
+apt-get -y purge popularity-contest installation-report landscape-common wireless-tools wpasupplicant ubuntu-serverguide
+rm -rf /usr/share/doc/*
+rm -rf /usr/share/man/*
+find /var/lib/apt -type f | xargs rm -f
+find /var/cache -type f -exec rm -rf {} \;
+set -e
 
 # Cleanup apt cache
 apt-get -y autoremove --purge

@@ -53,7 +53,7 @@
             "type": "shell",
             "execute_command": "echo '{{ user `ssh_password` }}' | sudo -E -S bash '{{.Path}}'",
             "scripts": [
-                "scripts/install.sh"
+                "scripts/docker.sh"
             ]
         }
     ],
@@ -71,8 +71,8 @@
         "ssh_password" : "docker",
         "cpus": "1",
         "memory": "1024",
-        "hostname": "docker01",
+        "hostname": "ubuntu",
         "headless": "false",
-        "disk_size": "10000"
+        "disk_size": "20000"
     }
 }
