@@ -1,12 +1,13 @@
 {
+    "_comment": "Build with `packer build ubuntu-docker.json`",
     "builders": [
         {
             "type": "virtualbox-iso",
             "guest_os_type": "Ubuntu_64",
-            "iso_url": "D:/iso/ubuntu-16.04-server-amd64.iso",
+            "iso_url": "iso/ubuntu-16.04-server-amd64.iso",
             "iso_checksum": "23e97cd5d4145d4105fbf29878534049",
             "iso_checksum_type": "md5",
-            "vm_name": "packer-ubuntu-16.04-amd64",
+            "vm_name": "ubuntu-docker",
             "disk_size": "{{ user `disk_size` }}",
             "headless": "{{ user `headless` }}",
             "boot_wait": "5s",
@@ -23,18 +24,24 @@
                 "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
                 "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
                 "<bs><bs><bs>",
-                "/install/vmlinuz ",
+                "/install/vmlinuz noapic ",
                 "initrd=/install/initrd.gz ",
                 "auto=true ",
                 "priority=critical ",
+                "fb=false debconf/frontend=noninteractive ",
                 "net.ifnames=0 ",
-                "url=http://{{ .HTTPIP }}:{{ .HTTPPort }}/preseed.cfg",
+                "hostname={{ user `hostname` }} ",
+                "url=http://{{ .HTTPIP }}:{{ .HTTPPort }}/preseed.cfg ",
+                "passwd/user-fullname={{ user `ssh_username` }} ",
+                "passwd/user-password={{ user `ssh_password` }} ",
+                "passwd/user-password-again={{ user `ssh_password` }} ",
+                "passwd/username={{ user `ssh_username` }} ",
                 "<wait><enter>"
             ],
             "ssh_wait_timeout": "30m",
-            "ssh_username": "vagrant",
-            "ssh_password": "vagrant",
-            "shutdown_command": "sudo systemctl poweroff",
+            "ssh_username": "{{ user `ssh_username` }}",
+            "ssh_password": "{{ user `ssh_password` }}",
+            "shutdown_command": "echo '{{ user `ssh_password` }}'|sudo -S shutdown -P now",
             "vboxmanage": [
                 ["modifyvm", "{{ .Name }}", "--memory", "{{ user `memory` }}"],
                 ["modifyvm", "{{ .Name }}", "--cpus", "{{ user `cpus` }}"]
@@ -44,21 +51,27 @@
     "provisioners": [
         {
             "type": "shell",
-            "scripts": "scripts/install.sh"
+            "execute_command": "echo '{{ user `ssh_password` }}' | sudo -E -S bash '{{.Path}}'",
+            "scripts": [
+                "scripts/install.sh"
+            ]
         }
     ],
     "post-processors": [
         {
             "type": "vagrant",
             "compression_level": 0,
-            "output": "output-virtualbox-iso/ubuntu-16.04-amd64.box",
-            "keep_input_artifact": false
+            "output": "box/ubuntu-docker.box",
+            "keep_input_artifact": false,
+            "vagrantfile_template": "tpl/ubuntu-docker.tpl"
         }
     ],
     "variables": {
+        "ssh_username" : "docker",
+        "ssh_password" : "docker",
         "cpus": "1",
-        "memory": "512",
-        "hostname": "xenial",
+        "memory": "1024",
+        "hostname": "ubuntu1604",
         "headless": "false",
         "disk_size": "20000"
     }
