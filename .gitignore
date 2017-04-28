@@ -1,4 +1,4 @@
-_trash/
+_local/
 output-virtualbox-iso/
 packer_cache/
 .vagrant/
