@@ -10,6 +10,7 @@ chmod 440 /etc/sudoers.d/$SSH_USER
 
 echo "==> Installing VirtualBox guest additions"
 apt-get update -y
+apt-get upgrade -y
 apt-get install -y linux-headers-$(uname -r) build-essential perl
 apt-get install -y dkms
 mount -o loop /home/${SSH_USER}/VBoxGuestAdditions.iso /mnt
@@ -64,12 +65,6 @@ echo "==> Clearing last login information"
 >/var/log/lastlog
 >/var/log/wtmp
 >/var/log/btmp
-
-# Whiteout root
-count=$(df --sync -kP / | tail -n1  | awk -F ' ' '{print $4}')
-let count--
-dd if=/dev/zero of=/tmp/whitespace bs=1024 count=$count
-rm /tmp/whitespace
 
 ## # Whiteout /boot
 ## count=$(df --sync -kP /boot | tail -n1 | awk -F ' ' '{print $4}')
