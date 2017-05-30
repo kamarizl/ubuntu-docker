@@ -1,4 +1,5 @@
 .DS_Store
+_local/
 output-virtualbox-iso/
 packer_cache/
 .vagrant/
